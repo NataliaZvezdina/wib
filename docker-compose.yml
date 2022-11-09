@@ -8,8 +8,32 @@ services:
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    restart: always
     expose:
       - '5432'
+    networks:
+      - bridge_net
+
+  infill:
+    container_name: infill
+    build: ./infill/
+    env_file: .env
+    command:
+      - ${NUM_RECORDS}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - bridge_net
 
 volumes:
   db_data:
+
+networks:
+  bridge_net:
+    driver: bridge
