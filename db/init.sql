@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS purchases (
     purchase_id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     item_id INT NOT NULL,
-    date TIMESTAMP,
+    date DATE,
     FOREIGN KEY (user_id) REFERENCES users (user_id),
     FOREIGN KEY (item_id) REFERENCES items (item_id)
 );
